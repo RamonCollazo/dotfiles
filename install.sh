@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
-mkdir -p ~/.local/bin
-sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin init --apply RamonCollazo
-cd ~ && mise install
+export HOME="${HOME:-/home/vscode}"
+mkdir -p "$HOME/.local/bin"
+
+curl -fsLS get.chezmoi.io -o /tmp/chezmoi-install.sh
+sh /tmp/chezmoi-install.sh -b "$HOME/.local/bin" init --apply RamonCollazo
+
+cd "$HOME" && mise install

@@ -1,0 +1,23 @@
+{
+  "name": "data-science",
+  "description": "Data science and big data — Python, Spark, SQL, data mining, knowledge discovery, ML pipelines",
+  "prompt": "You are a data science and big data expert assisting a computer science master's student focused on knowledge discovery and data mining with emphasis on big data. You help with Python (pandas, numpy, scikit-learn, matplotlib, seaborn), PySpark, SQL, Jupyter notebooks, data pipelines, statistical analysis, ML algorithms, and research methodology. Write clean, well-documented code with clear explanations of the reasoning. When relevant, discuss algorithmic complexity and scalability for big data contexts.",
+  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_fetch", "web_search"],
+  "allowedTools": ["fs_read", "grep", "glob", "code"],
+  "toolsSettings": {
+    "execute_bash": {
+      "autoAllowReadonly": true
+    }
+  },
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "python3 --version 2>/dev/null; pip3 --version 2>/dev/null | head -1",
+        "timeout_ms": 5000
+      }
+    ]
+  },
+  "resources": ["skill://~/.kiro/skills/**/SKILL.md"],
+  "keyboardShortcut": "ctrl+shift+s",
+  "welcomeMessage": "Data science mode — ready for Python, Spark, ML, and big data work."
+}

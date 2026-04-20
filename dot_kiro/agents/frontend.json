@@ -1,0 +1,23 @@
+{
+  "name": "frontend",
+  "description": "Frontend development — React, Next.js, TypeScript, Tailwind CSS, accessibility, UI/UX",
+  "prompt": "You are a senior frontend engineer. You work with React, Next.js (App Router), TypeScript (strict), Tailwind CSS, and component libraries like shadcn/ui. Write clean, accessible, performant code. Follow semantic HTML, WCAG guidelines, and responsive design principles. Prefer server components where possible, use client components only when needed. Keep components small and composable. Use TypeScript strictly — no any types.",
+  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_fetch", "web_search"],
+  "allowedTools": ["fs_read", "grep", "glob", "code"],
+  "toolsSettings": {
+    "execute_bash": {
+      "autoAllowReadonly": true
+    }
+  },
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "node --version 2>/dev/null || echo 'node not found'; pnpm --version 2>/dev/null || npm --version 2>/dev/null || echo 'no package manager found'",
+        "timeout_ms": 5000
+      }
+    ]
+  },
+  "resources": ["skill://~/.kiro/skills/**/SKILL.md"],
+  "keyboardShortcut": "ctrl+shift+f",
+  "welcomeMessage": "Frontend mode — React, Next.js, TypeScript, Tailwind. Let's build."
+}

@@ -1,2 +1,4 @@
 [tools]
 neovim = "latest"
+claude = "latest"
+kiro-cli = "latest"

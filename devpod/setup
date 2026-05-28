@@ -4,5 +4,19 @@ set -e
 export HOME="${HOME:-/home/vscode}"
 mkdir -p "$HOME/.local/bin"
 
+# install chezmoi and apply dotfiles (which also installs tools via mise)
 curl -fsLS get.chezmoi.io -o /tmp/chezmoi-install.sh
 sh /tmp/chezmoi-install.sh -b "$HOME/.local/bin" init --apply RamonCollazo
+
+# activate mise in future interactive shells so installed tools are on PATH
+if ! grep -q "mise activate" "$HOME/.bashrc" 2>/dev/null; then
+  {
+    echo ""
+    echo "# mise activation"
+    echo 'eval "$($HOME/.local/bin/mise activate bash)"'
+  } >> "$HOME/.bashrc"
+fi
+
+# install kiro-cli via official installer
+# (the mise registry entry is currently broken upstream; re-enable in mise once fixed)
+curl -fsSL https://cli.kiro.dev/install | bash

@@ -1,22 +1,52 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 export HOME="${HOME:-/home/vscode}"
 mkdir -p "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
 
-# install chezmoi and apply dotfiles (which also installs tools via mise)
-curl -fsLS get.chezmoi.io -o /tmp/chezmoi-install.sh
-sh /tmp/chezmoi-install.sh -b "$HOME/.local/bin" init --apply RamonCollazo
+tmpfiles=()
+cleanup() { rm -f "${tmpfiles[@]}"; }
+trap cleanup EXIT
+require() { command -v "$1" >/dev/null 2>&1 || { echo "error: '$1' is required" >&2; exit 1; }; }
+require curl
+require git
 
-# activate mise in future interactive shells so installed tools are on PATH
+# --- personal tier: chezmoi + mise ---
+if ! command -v chezmoi >/dev/null 2>&1; then
+  installer="$(mktemp)"; tmpfiles+=("$installer")
+  curl -fsLS get.chezmoi.io -o "$installer"
+  sh "$installer" -b "$HOME/.local/bin" init --apply RamonCollazo
+else
+  chezmoi init --apply RamonCollazo
+fi
+
+mise_bin="$(command -v mise || echo "$HOME/.local/bin/mise")"
 if ! grep -q "mise activate" "$HOME/.bashrc" 2>/dev/null; then
   {
     echo ""
-    echo "# mise activation"
-    echo 'eval "$($HOME/.local/bin/mise activate bash)"'
+    echo "# mise activation (added by dotfiles devpod/setup)"
+    echo 'export PATH="$HOME/.local/bin:$PATH"'
+    echo "eval \"\$(\"$mise_bin\" activate bash)\""
   } >> "$HOME/.bashrc"
 fi
 
-# install kiro-cli via official installer
-# (the mise registry entry is currently broken upstream; re-enable in mise once fixed)
-curl -fsSL https://cli.kiro.dev/install | bash
+# --- knowledge vault: clone to the SAME absolute path as the host so the vault's
+#     CLAUDE.md / settings.local.json absolute paths resolve unchanged ---
+VAULT_DIR="/home/ramon/Repos/forgejo/personal/claude-obsidian"
+if [ -n "${FORGEJO_TOKEN:-}" ]; then
+  if [ ! -d "$VAULT_DIR/.git" ]; then
+    mkdir -p "$(dirname "$VAULT_DIR")"
+    git clone "https://oauth2:${FORGEJO_TOKEN}@forgejo.raymondcollazo.com/ramon/claude-obsidian.git" "$VAULT_DIR"
+  fi
+else
+  echo "warn: FORGEJO_TOKEN unset -> skipping vault clone (Project Agent will lack the vault)" >&2
+fi
+
+# --- kiro-cli: idempotent, download-then-run (no blind curl|bash) ---
+# NOTE: mise registry entry broken upstream; re-enable in dot_config/mise/config.toml when fixed.
+if ! command -v kiro >/dev/null 2>&1; then
+  kiro_installer="$(mktemp)"; tmpfiles+=("$kiro_installer")
+  curl -fsSL https://cli.kiro.dev/install -o "$kiro_installer"
+  bash "$kiro_installer"
+fi

@@ -1,5 +1,7 @@
 #!/bin/bash
 # mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
-set -e
+set -euo pipefail
 
-"$HOME/.local/bin/mise" install
+{{ $mise := lookPath "mise" -}}
+{{ if not $mise }}{{ $mise = (joinPath .chezmoi.homeDir ".local/bin/mise") }}{{ end -}}
+"{{ $mise }}" install

@@ -1,0 +1,11 @@
+#!/bin/bash
+# dup <repo-or-path> [extra devpod up flags]
+# Wraps `devpod up` and injects the secrets file into both the dotfiles install
+# script (FORGEJO_TOKEN for the vault clone) and the workspace env
+# (CLAUDE_CODE_OAUTH_TOKEN for interactive claude).
+set -euo pipefail
+SECRETS="${DEVPOD_SECRETS:-$HOME/.config/devpod/secrets.env}"
+[ -f "$SECRETS" ] || { echo "error: secrets file not found: $SECRETS" >&2; exit 1; }
+exec devpod up "$@" \
+  --dotfiles-script-env-file "$SECRETS" \
+  --workspace-env-file "$SECRETS"

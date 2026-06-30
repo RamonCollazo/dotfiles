@@ -43,12 +43,14 @@ if [ ! -d "$VAULT_DIR/.git" ]; then
   mkdir -p "$(dirname "$VAULT_DIR")"
   if [ -n "${FORGEJO_TOKEN:-}" ]; then
     helper='!f() { echo username=oauth2; echo "password=$FORGEJO_TOKEN"; }; f'
-    git -c credential.helper="$helper" clone "$VAULT_URL" "$VAULT_DIR" \
+    GIT_TERMINAL_PROMPT=0 git -c credential.helper="$helper" clone "$VAULT_URL" "$VAULT_DIR" \
       && git -C "$VAULT_DIR" config credential.helper "$helper" \
       || echo "warn: vault clone failed; continuing without it" >&2
   else
-    git clone "$VAULT_URL" "$VAULT_DIR" \
-      || echo "warn: vault clone failed (no forwarded git creds?); continuing" >&2
+    # No token (plain `command devpod up` / GUI / bash). Skip rather than letting
+    # git ask devpod -> host for credentials, which triggers an interactive login
+    # popup. Launch via the fish `devpod` wrapper or `dup` to get FORGEJO_TOKEN.
+    echo "warn: FORGEJO_TOKEN unset -> skipping vault clone (use the devpod fish wrapper or dup)" >&2
   fi
 fi
 

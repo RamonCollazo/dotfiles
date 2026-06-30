@@ -37,7 +37,7 @@ VAULT_DIR="/home/ramon/Repos/forgejo/personal/claude-obsidian"
 if [ -n "${FORGEJO_TOKEN:-}" ]; then
   if [ ! -d "$VAULT_DIR/.git" ]; then
     mkdir -p "$(dirname "$VAULT_DIR")"
-    git clone "https://oauth2:${FORGEJO_TOKEN}@forgejo.raymondcollazo.com/ramon/claude-obsidian.git" "$VAULT_DIR"
+    git clone "https://${FORGEJO_TOKEN}@forgejo.raymondcollazo.com/ramon/claude-obsidian.git" "$VAULT_DIR"
   fi
 else
   echo "warn: FORGEJO_TOKEN unset -> skipping vault clone (Project Agent will lack the vault)" >&2

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-VAULT_DIR="${VAULT_DIR:-/home/ramon/Repos/forgejo/personal/claude-obsidian}"
+VAULT_DIR="${VAULT_DIR:-$HOME/Repos/forgejo/personal/claude-obsidian}"
 [ -d "$VAULT_DIR" ] || { echo "error: vault not found at $VAULT_DIR" >&2; exit 1; }
 ln -sf "$VAULT_DIR/meta/project-agent-CLAUDE.md" ./CLAUDE.md
 [ -f ./CONTEXT.md ] || cp "$VAULT_DIR/meta/CONTEXT-template.md" ./CONTEXT.md

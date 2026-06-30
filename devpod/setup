@@ -33,12 +33,19 @@ fi
 
 # --- knowledge vault: clone under $HOME so it matches the vault's own
 #     ~/Repos/forgejo/personal/claude-obsidian/ references (host: /home/ramon,
-#     container: /home/vscode -> both resolve as ~). Non-fatal on failure. ---
+#     container: /home/vscode -> both resolve as ~). Auth via a credential helper
+#     that reads $FORGEJO_TOKEN from the env at request time, so the token is never
+#     written into the remote URL or .git/config. Non-fatal on failure. ---
 VAULT_DIR="$HOME/Repos/forgejo/personal/claude-obsidian"
+VAULT_URL="https://forgejo.raymondcollazo.com/ramon/claude-obsidian"
+VAULT_CRED_HELPER='!f() { echo username=oauth2; echo "password=$FORGEJO_TOKEN"; }; f'
 if [ -n "${FORGEJO_TOKEN:-}" ]; then
   if [ ! -d "$VAULT_DIR/.git" ]; then
     mkdir -p "$(dirname "$VAULT_DIR")"
-    if ! git clone "https://${FORGEJO_TOKEN}@forgejo.raymondcollazo.com/ramon/claude-obsidian.git" "$VAULT_DIR"; then
+    if git -c credential.helper="$VAULT_CRED_HELPER" clone "$VAULT_URL" "$VAULT_DIR"; then
+      # persist auth for handoff pushes (token stays in env, not on disk)
+      git -C "$VAULT_DIR" config credential.helper "$VAULT_CRED_HELPER"
+    else
       echo "warn: vault clone failed; continuing without it" >&2
     fi
   fi

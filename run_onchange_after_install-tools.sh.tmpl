@@ -4,4 +4,6 @@ set -euo pipefail
 
 {{ $mise := lookPath "mise" -}}
 {{ if not $mise }}{{ $mise = (joinPath .chezmoi.homeDir ".local/bin/mise") }}{{ end -}}
+# trust the just-deployed global config so a fresh host/container can install
+"{{ $mise }}" trust "{{ joinPath .chezmoi.homeDir ".config/mise/config.toml" }}"
 "{{ $mise }}" install

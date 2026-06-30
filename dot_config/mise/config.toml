@@ -1,3 +1,8 @@
+[settings]
+# Skip gpg signature verification for node; checksum verification still runs.
+# Avoids failures where gpg/keyboxd is broken or unavailable (some hosts, containers).
+node.gpg_verify = false
+
 [tools]
 neovim = "latest"
 node = "lts"

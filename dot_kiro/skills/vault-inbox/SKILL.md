@@ -19,7 +19,7 @@ Do NOT write handoffs for routine tasks, simple config changes, or things alread
 
 ## Where
 
-`~/Repos/forgejo/personal/claude-obsidian/inbox/<YYYY-MM-DD>-<short-slug>.md`
+`~/Projects/claude-obsidian/inbox/<YYYY-MM-DD>-<short-slug>.md`
 
 ## Template
 

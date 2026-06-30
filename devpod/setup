@@ -32,11 +32,11 @@ if ! grep -q "mise activate" "$HOME/.bashrc" 2>/dev/null; then
 fi
 
 # --- knowledge vault: clone under $HOME so it matches the vault's own
-#     ~/Repos/forgejo/personal/claude-obsidian/ references (host: /home/ramon,
+#     ~/Projects/claude-obsidian/ references (host: /home/ramon,
 #     container: /home/vscode -> both resolve as ~). Auth via a credential helper
 #     that reads $FORGEJO_TOKEN from the env at request time, so the token is never
 #     written into the remote URL or .git/config. Non-fatal on failure. ---
-VAULT_DIR="$HOME/Repos/forgejo/personal/claude-obsidian"
+VAULT_DIR="$HOME/Projects/claude-obsidian"
 VAULT_URL="https://forgejo.raymondcollazo.com/ramon/claude-obsidian"
 VAULT_CRED_HELPER='!f() { echo username=oauth2; echo "password=$FORGEJO_TOKEN"; }; f'
 if [ -n "${FORGEJO_TOKEN:-}" ]; then

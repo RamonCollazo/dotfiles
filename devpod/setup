@@ -42,10 +42,18 @@ VAULT_URL="https://forgejo.raymondcollazo.com/ramon/claude-obsidian"
 if [ ! -d "$VAULT_DIR/.git" ]; then
   mkdir -p "$(dirname "$VAULT_DIR")"
   if [ -n "${FORGEJO_TOKEN:-}" ]; then
-    helper='!f() { echo username=oauth2; echo "password=$FORGEJO_TOKEN"; }; f'
-    GIT_TERMINAL_PROMPT=0 git -c credential.helper="$helper" clone "$VAULT_URL" "$VAULT_DIR" \
-      && git -C "$VAULT_DIR" config credential.helper "$helper" \
-      || echo "warn: vault clone failed; continuing without it" >&2
+    # Embed the token in the clone URL so git consults NO credential helper —
+    # this avoids devpod's git-credential forwarding, which otherwise proxies to
+    # the host and triggers an interactive login popup. Scrub the token from the
+    # stored remote afterwards; future pushes use the env-token helper.
+    if GIT_TERMINAL_PROMPT=0 git clone \
+         "https://oauth2:${FORGEJO_TOKEN}@forgejo.raymondcollazo.com/ramon/claude-obsidian" \
+         "$VAULT_DIR"; then
+      git -C "$VAULT_DIR" remote set-url origin "$VAULT_URL"
+      git -C "$VAULT_DIR" config credential.helper '!f() { echo username=oauth2; echo "password=$FORGEJO_TOKEN"; }; f'
+    else
+      echo "warn: vault clone failed; continuing without it" >&2
+    fi
   else
     # No token (plain `command devpod up` / GUI / bash). Skip rather than letting
     # git ask devpod -> host for credentials, which triggers an interactive login

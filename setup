@@ -25,7 +25,7 @@ mise_bin="$(command -v mise || echo "$HOME/.local/bin/mise")"
 if ! grep -q "mise activate" "$HOME/.bashrc" 2>/dev/null; then
   {
     echo ""
-    echo "# mise activation (added by dotfiles setup/setup)"
+    echo "# mise activation (added by dotfiles setup)"
     echo 'export PATH="$HOME/.local/bin:$PATH"'
     echo "eval \"\$(\"$mise_bin\" activate bash)\""
   } >> "$HOME/.bashrc"

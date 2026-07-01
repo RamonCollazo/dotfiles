@@ -64,7 +64,7 @@ fi
 
 # --- kiro-cli: idempotent, download-then-run (no blind curl|bash) ---
 # NOTE: mise registry entry broken upstream; re-enable in dot_config/mise/config.toml when fixed.
-if ! command -v kiro >/dev/null 2>&1; then
+if ! command -v kiro-cli >/dev/null 2>&1; then
   kiro_installer="$(mktemp)"; tmpfiles+=("$kiro_installer")
   curl -fsSL https://cli.kiro.dev/install -o "$kiro_installer"
   bash "$kiro_installer"

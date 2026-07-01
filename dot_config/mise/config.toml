@@ -4,6 +4,7 @@
 node.gpg_verify = false
 
 [tools]
+chezmoi = "latest"
 neovim = "latest"
 node = "lts"
 claude = "latest"

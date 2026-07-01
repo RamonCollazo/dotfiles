@@ -25,7 +25,7 @@ mise_bin="$(command -v mise || echo "$HOME/.local/bin/mise")"
 if ! grep -q "mise activate" "$HOME/.bashrc" 2>/dev/null; then
   {
     echo ""
-    echo "# mise activation (added by dotfiles devpod/setup)"
+    echo "# mise activation (added by dotfiles scripts/setup)"
     echo 'export PATH="$HOME/.local/bin:$PATH"'
     echo "eval \"\$(\"$mise_bin\" activate bash)\""
   } >> "$HOME/.bashrc"
@@ -34,9 +34,9 @@ fi
 # --- knowledge vault: cloned under $HOME so it matches the vault's own
 #     ~/Projects/claude-obsidian/ references (host: /home/ramon,
 #     container: /home/vscode -> both resolve as ~). Non-fatal on failure.
-#     Auth: by default rely on devpod's git-credential forwarding (host's Forgejo
-#     credential), so a plain `devpod up` clones the vault with no token in the
-#     container. If FORGEJO_TOKEN is set (e.g. via `dup`), use it directly. ---
+#     Auth: needs FORGEJO_TOKEN in the env (injected by the fish/bash `devpod`
+#     wrapper or `dup`). Without it the clone is skipped — a plain clone would make
+#     devpod proxy credentials to the host and trigger an interactive login popup. ---
 VAULT_DIR="$HOME/Projects/claude-obsidian"
 VAULT_URL="https://forgejo.raymondcollazo.com/ramon/claude-obsidian"
 if [ ! -d "$VAULT_DIR/.git" ]; then

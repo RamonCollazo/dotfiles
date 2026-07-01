@@ -8,6 +8,7 @@ chezmoi = "latest"
 neovim = "latest"
 node = "latest"
 claude = "latest"
+codex = "latest"
 tmux = "latest"
 # kiro-cli installed via curl in setup until the mise registry entry is fixed
 # (aqua:kiro.dev/kiro-cli currently lacks repo_owner/repo_name and fails to resolve)

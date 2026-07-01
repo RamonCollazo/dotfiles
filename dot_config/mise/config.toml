@@ -6,7 +6,7 @@ node.gpg_verify = false
 [tools]
 chezmoi = "latest"
 neovim = "latest"
-node = "lts"
+node = "latest"
 claude = "latest"
 tmux = "latest"
 # kiro-cli installed via curl in setup until the mise registry entry is fixed

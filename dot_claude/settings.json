@@ -1,5 +1,5 @@
 {
-  "model": "claude-fable-5[1m]",
+  "model": "opus",
   "includeCoAuthoredBy": false,
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true,

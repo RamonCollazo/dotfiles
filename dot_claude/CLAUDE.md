@@ -1,4 +1,4 @@
-# Global Instructions — Ramon
+# Global Instructions (Ramon)
 
 ## Knowledge system: vault is the source of truth
 
@@ -16,6 +16,16 @@ durable knowledge: gotchas, decisions, lessons, tool notes, project state.
 - **In a devpod**, the vault is a fresh clone: after writing an inbox handoff,
   `git add`/`commit`/`push` the vault (auth is automatic via `FORGEJO_TOKEN`), or the
   handoff dies with the container.
+
+## Harness design rule (Bitter Lesson)
+
+- When changing the harness itself (CLAUDE.md files, hooks, agents, skills, settings):
+  prefer context over instruction, verification over prescription; never encode what
+  the model can infer. Scaffolding must name the model weakness it compensates for.
+- Every harness constraint is tracked in the scaffold ledger at
+  `~/Projects/claude-obsidian/meta/scaffold-ledger.md`. New scaffolds get an entry
+  (weakness + removal test). When the default model changes, review the ledger and
+  delete what the new model no longer needs; deletion is the default trajectory.
 
 ## Workspaces
 

@@ -3,7 +3,7 @@
   "includeCoAuthoredBy": false,
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true,
-    "firecrawl@claude-plugins-official": true,
+    "firecrawl@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "codex@openai-codex": true,
     "rust-analyzer-lsp@claude-plugins-official": true

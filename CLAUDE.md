@@ -1,0 +1,1 @@
+/home/ramon/Projects/claude-obsidian/meta/project-agent-CLAUDE.md

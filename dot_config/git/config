@@ -1,0 +1,2 @@
+[credential "https://forgejo.raymondcollazo.com"]
+	helper = "!f() { echo username=oauth2; echo \"password=$FORGEJO_TOKEN\"; }; f"

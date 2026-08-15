@@ -31,6 +31,17 @@ if ! grep -q "mise activate" "$HOME/.bashrc" 2>/dev/null; then
   } >> "$HOME/.bashrc"
 fi
 
+# --- Claude Code: seed first-run onboarding state ---
+#     ~/.claude.json is mutable state, NOT a chezmoi-managed dotfile (templating it
+#     fights the tool). A fresh devpod has none, so Claude Code runs first-run
+#     onboarding and demands a browser login *before* it ever reads
+#     CLAUDE_CODE_OAUTH_TOKEN — which presents as an auth failure even though the
+#     token is valid. This flag is the only thing gating that; there is no env var
+#     for it. Guarded on absence so a populated file is never clobbered. ---
+if [ ! -f "$HOME/.claude.json" ]; then
+  printf '{"hasCompletedOnboarding": true}\n' > "$HOME/.claude.json"
+fi
+
 # --- knowledge vault: cloned under $HOME so it matches the vault's own
 #     ~/Projects/claude-obsidian/ references (host: /home/ramon,
 #     container: /home/vscode -> both resolve as ~). Non-fatal on failure.

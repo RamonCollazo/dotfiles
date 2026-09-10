@@ -1,5 +1,5 @@
 {
-  "model": "opus",
+  "model": "fable",
   "includeCoAuthoredBy": false,
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true,

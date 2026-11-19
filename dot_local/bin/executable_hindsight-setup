@@ -1,0 +1,45 @@
+#!/bin/bash
+# hindsight-setup [--if-missing]
+# Installs the Hindsight coding-agents plugin (hooks + local hindsight_* MCP) for
+# Claude Code and Codex, pointed at the homelab server, then applies local
+# overrides. Idempotent. --if-missing skips the npx install when the Claude hooks
+# are already in ~/.claude/settings.json (chezmoi apply strips them; the
+# run_after script calls this to put them back).
+set -euo pipefail
+
+if [ -z "${HINDSIGHT_API_TOKEN:-}" ]; then
+  echo "warn: HINDSIGHT_API_TOKEN unset -> skipping Hindsight memory setup" >&2
+  exit 0
+fi
+if [ -d "$HOME/.claude/LIFEOS" ]; then
+  echo "info: LifeOS owns ~/.claude here -> skipping Hindsight memory setup" >&2
+  exit 0
+fi
+
+mise_bin="$(command -v mise || echo "$HOME/.local/bin/mise")"
+settings="$HOME/.claude/settings.json"
+config="$HOME/.hindsight/coding-agent.json"
+
+if [ "${1:-}" != "--if-missing" ] || ! grep -q 'hindsight/coding-agents/dist/claude-hook.js' "$settings" 2>/dev/null; then
+  "$mise_bin" x node -- npx -y @vectorize-io/hindsight-coding-agents@latest install claude-code codex \
+    --server self-hosted --api-url https://hindsight.raymondcollazo.com
+fi
+
+# Prompt-time injection: reflect is an LLM call that takes ~20s on this server and
+# hits the plugin's 20s timeout, so nothing gets injected. recall is retrieval only.
+if [ -f "$config" ]; then
+  "$mise_bin" x node -- node -e '
+    const fs = require("fs"), f = process.argv[1];
+    const c = JSON.parse(fs.readFileSync(f, "utf8"));
+    Object.assign(c, { autoInject: "recall", injectTimeoutMs: 10000 });
+    fs.writeFileSync(f, JSON.stringify(c, null, 2) + "\n", { mode: 0o600 });
+  ' "$config"
+fi
+
+# Claude Code strips CLAUDE_CODE_OAUTH_TOKEN from hook subprocesses, so the plugin's
+# headless codebase survey (claude -p) runs "Not logged in" in devpods. The
+# hindsight-survey-claude wrapper (HINDSIGHT_CLAUDE_BIN) reads it from this file.
+if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+  token_dir="${XDG_CONFIG_HOME:-$HOME/.config}/hindsight"
+  (umask 077 && mkdir -p "$token_dir" && printf '%s' "$CLAUDE_CODE_OAUTH_TOKEN" >"$token_dir/claude-oauth-token")
+fi

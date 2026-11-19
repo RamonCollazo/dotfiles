@@ -77,15 +77,8 @@ if [ ! -d "$VAULT_DIR/.git" ]; then
   fi
 fi
 
-# --- Hindsight coding-agent memory: hooks + local hindsight_* MCP for Claude Code
-#     and Codex, one bank per repo on the homelab server. Runs AFTER chezmoi apply
-#     on purpose: install merges hooks into the live ~/.claude/settings.json, which
-#     chezmoi would otherwise revert. Token comes from HINDSIGHT_API_TOKEN (injected
-#     like FORGEJO_TOKEN); the plugin reads it from the env. Non-fatal. ---
-if [ -n "${HINDSIGHT_API_TOKEN:-}" ]; then
-  "$mise_bin" x node -- npx -y @vectorize-io/hindsight-coding-agents@latest install claude-code codex \
-    --server self-hosted --api-url https://hindsight.raymondcollazo.com ||
-    echo "warn: hindsight coding-agents install failed; continuing" >&2
-else
-  echo "warn: HINDSIGHT_API_TOKEN unset -> skipping Hindsight memory install" >&2
-fi
+# --- Hindsight coding-agent memory: chezmoi's run_after_zz-hindsight-memory script
+#     already ran hindsight-setup during the apply above; this is a fallback in case
+#     it failed there. Needs HINDSIGHT_API_TOKEN (injected like FORGEJO_TOKEN). ---
+"$HOME/.local/bin/hindsight-setup" --if-missing ||
+  echo "warn: hindsight-setup failed; continuing" >&2

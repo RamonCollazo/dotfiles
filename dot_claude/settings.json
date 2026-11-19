@@ -1,5 +1,8 @@
 {
   "model": "fable",
+  "env": {
+    "HINDSIGHT_CLAUDE_BIN": "hindsight-survey-claude"
+  },
   "includeCoAuthoredBy": false,
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true,

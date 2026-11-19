@@ -2,3 +2,11 @@ setup
 install.sh
 CLAUDE.md
 CONTEXT.md
+
+# LifeOS owns ~/.claude wherever it is installed; the Claude config in these
+# dotfiles (settings.json, CLAUDE.md, agents, hooks) is for devpods. Without this,
+# `chezmoi apply`/`update` would overwrite LifeOS's settings, hooks and gates.
+{{- if stat (joinPath .chezmoi.homeDir ".claude/LIFEOS") }}
+.claude
+.claude/**
+{{- end }}

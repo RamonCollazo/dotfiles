@@ -9,11 +9,32 @@ neovim = "latest"
 node = "latest"
 python = "latest"
 claude = "latest"
-codex = "latest"
 tmux = "latest"
 fd = "latest"
 ripgrep = "latest"
 lazygit = "latest"
+# Codex: the full release package (bin/ + codex-resources/), not the bare binary the
+# registry's aqua backend installs, which fails with "no complete local package".
+# x86_64 only as written. "latest" resolves on `mise upgrade`.
+"github:openai/codex" = { version = "latest", asset_pattern = "codex-package-x86_64-unknown-linux-musl.tar.gz", version_prefix = "rust-v", bin_path = "bin" }
 # kiro-cli installed via curl in setup until the mise registry entry is fixed
 # (aqua:kiro.dev/kiro-cli currently lacks repo_owner/repo_name and fails to resolve)
 # "kiro-cli" = "latest"
+
+[tasks.hermes]
+description = "Run the source-installed Hermes (arguments are forwarded)"
+run = 'exec "$HOME/.local/share/hermes-agent/.hermes/bin/hermes"'
+raw = true
+
+[tasks."hermes:bootstrap"]
+description = "Prepare the pinned Hermes source runtime through Hermes PM"
+dir = "{{env.HOME}}/.local/share/hermes-agent"
+run = 'python3 "$HOME/.local/share/hermes-mise/bootstrap.py"'
+
+[tasks."hermes:check"]
+description = "Check the Hermes source version and memory-provider readiness"
+run = [
+  '"$HOME/.local/share/hermes-agent/.hermes/bin/hermes" --version',
+  '"$HOME/.local/share/hermes-agent/.hermes/bin/hermes" memory status',
+]
+

@@ -1,2 +1,2 @@
 [credential "https://forgejo.raymondcollazo.com"]
-	helper = "!f() { echo username=oauth2; echo \"password=$FORGEJO_TOKEN\"; }; f"
+	helper = "!f() { test \"$1\" = get || exit 0; echo username=oauth2; echo \"password=${FORGEJO_TOKEN:-$(\"$HOME/.local/bin/forgejo-token\")}\"; }; f"
